@@ -1,6 +1,7 @@
-import 'package:client/protos/filesystem.pbgrpc.dart';
+import 'package:alt/protos/filesystem.pbgrpc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:grpc/grpc.dart';
+import '../protos/filesystem.pbgrpc.dart';
 import 'channel/connection.dart' as impl;
 
 class FsService {

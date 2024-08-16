@@ -1,7 +1,7 @@
-import 'package:client/protos/filesystem.pb.dart';
-import 'package:client/providers/filesystem_provider.dart';
-import 'package:client/providers/hardlink_provider.dart';
-import 'package:client/services/fs_client.dart';
+import 'package:alt/protos/filesystem.pb.dart';
+import 'package:alt/providers/filesystem_provider.dart';
+import 'package:alt/providers/hardlink_provider.dart';
+import 'package:alt/services/fs_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

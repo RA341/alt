@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:client/protos/filesystem.pb.dart';
-import 'package:client/services/fs_client.dart';
+import 'package:alt/protos/filesystem.pb.dart';
+import 'package:alt/services/fs_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final queryProvider =

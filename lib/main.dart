@@ -1,7 +1,6 @@
-import 'package:client/presentation/folder_view.dart';
-import 'package:client/presentation/hardlink_bar.dart';
-import 'package:client/providers/filesystem_provider.dart';
-import 'package:client/services/fs_client.dart';
+import 'package:alt/presentation/folder_view.dart';
+import 'package:alt/presentation/hardlink_bar.dart';
+import 'package:alt/services/fs_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
