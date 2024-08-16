@@ -75,15 +75,15 @@ workflows:
           filters:
             branches:
               only: [ "release" ]
-      - build_linux_android:
+      - build_android:
           filters:
             branches:
               only: [ "release" ]
           requires:
             - semver-release
-      - build_windows:
-          filters:
-            branches:
-              only: [ "release" ]
-          requires:
-            - semver-release
+#      - build_windows:
+#          filters:
+#            branches:
+#              only: [ "release" ]
+#          requires:
+#            - semver-release
