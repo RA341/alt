@@ -1,6 +1,8 @@
 import 'package:alt/core/hardlink/providers/filesystem_provider.dart';
 import 'package:alt/core/hardlink/ui/folder_view.dart';
 import 'package:alt/core/hardlink/ui/hardlink_bar.dart';
+import 'package:alt/core/navigation/navigation_provider.dart';
+import 'package:alt/core/navigation/scaffhold_selector.dart';
 import 'package:alt/grpc/grpc_client.dart';
 import 'package:alt/services/logger.dart';
 import 'package:flutter/material.dart';
@@ -40,22 +42,7 @@ class MyHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const Scaffold(
-      body: Row(
-        children: [
-          Expanded(
-            child: FolderView(
-              input: FolderInput(initialDir: '/mnt/pool/media/', tab: 0),
-            ),
-          ),
-          Expanded(
-            child: FolderView(
-              input: FolderInput(initialDir: '/mnt/pool/media/', tab: 1),
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: HardlinkBar(),
-    );
+    return const ScaffholdSelector();
   }
 }
+

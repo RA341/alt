@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SystemControls extends ConsumerWidget {
-  const SystemControls({super.key});
+class SettingsPage extends ConsumerWidget {
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return const Center(
-      child: Text('Home page'),
+      child: Text('Settings page'),
     );
   }
 }
