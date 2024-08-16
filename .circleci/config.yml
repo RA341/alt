@@ -37,6 +37,7 @@ jobs:
     steps:
       - flutter/install_sdk_and_pub:
           version: 3.24.0
+      - run: flutter pub get
       - flutter/install_android_gradle_dependencies
       - flutter/install_android_gem
       - run:
