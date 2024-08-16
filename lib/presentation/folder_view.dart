@@ -9,18 +9,18 @@ import 'package:path/path.dart' as path;
 
 class FolderView extends ConsumerStatefulWidget {
   const FolderView({
-    required this.tabIndex,
+    required this.input,
     super.key,
   });
 
-  final int tabIndex;
+  final FolderInput input;
 
   @override
   ConsumerState createState() => _FolderViewState();
 }
 
 class _FolderViewState extends ConsumerState<FolderView> {
-  int get tabIndex => widget.tabIndex;
+  FolderInput get input => widget.input;
 
   late final TextEditingController searchController;
 
@@ -43,7 +43,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
 
   @override
   Widget build(BuildContext context) {
-    final folder = ref.watch(folderProvider(tabIndex));
+    final folder = ref.watch(folderProvider(input));
 
     return folder.when(
       data: (returnedData) {
@@ -58,7 +58,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
               leading: IconButton(
                 onPressed: () {
                   ref
-                      .read(folderProvider(tabIndex).notifier)
+                      .read(folderProvider(input).notifier)
                       .changeDir(path.dirname(data.fullPath));
                 },
                 icon: const Icon(Icons.arrow_back),
@@ -67,7 +67,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
                 SizedBox(
                   width: 400,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8),
                     child: SearchBar(
                       controller: searchController,
                       hintText: 'Search folder',
@@ -87,7 +87,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
                 ),
                 IconButton(
                   onPressed: () async {
-                    await showDialog(
+                    await showDialog<void>(
                       context: context,
                       builder: (context) {
                         return Dialog(
@@ -95,15 +95,13 @@ class _FolderViewState extends ConsumerState<FolderView> {
                         );
                       },
                     );
-                    ref.invalidate(getFolderProvider(data.fullPath));
-                    ref.invalidate(folderProvider(tabIndex));
+                    refreshDir(data);
                   },
                   icon: const Icon(Icons.create_new_folder),
                 ),
                 IconButton(
                   onPressed: () async {
-                    ref.invalidate(getFolderProvider(data.fullPath));
-                    ref.invalidate(folderProvider(tabIndex));
+                    refreshDir(data);
                   },
                   icon: const Icon(Icons.refresh),
                 )
@@ -119,14 +117,14 @@ class _FolderViewState extends ConsumerState<FolderView> {
                     final folder = folderList[index];
 
                     if (searchController.text.isEmpty) {
-                      return FolderTile(folder: folder, tabIndex: tabIndex);
+                      return FolderTile(folder: folder, tabIndex: input);
                     }
 
                     if (path
                         .basename(folder.fullPath)
                         .toLowerCase()
                         .contains(searchController.text.toLowerCase())) {
-                      return FolderTile(folder: folder, tabIndex: tabIndex);
+                      return FolderTile(folder: folder, tabIndex: input);
                     }
 
                     return const SizedBox();
@@ -161,7 +159,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
               Text(error.toString()),
               IconButton(
                 onPressed: () {
-                  ref.invalidate(folderProvider(tabIndex));
+                  ref.invalidate(folderProvider(input));
                 },
                 icon: const Icon(Icons.refresh),
               )
@@ -169,13 +167,17 @@ class _FolderViewState extends ConsumerState<FolderView> {
           ),
         );
       },
-      loading: () => const CircularProgressIndicator(),
+      loading: () => const Center(child: CircularProgressIndicator()),
     );
+  }
+
+  void refreshDir(Folder data) {
+    ref.read(folderProvider(input).notifier).refreshDir(data.fullPath);
   }
 }
 
 class NewFolderDialog extends StatefulWidget {
-  const NewFolderDialog({super.key, required this.parentPath});
+  const NewFolderDialog({required this.parentPath, super.key});
 
   final String parentPath;
 
@@ -243,13 +245,13 @@ class _NewFolderDialogState extends State<NewFolderDialog> {
 
 class FolderTile extends ConsumerWidget {
   const FolderTile({
-    super.key,
     required this.folder,
     required this.tabIndex,
+    super.key,
   });
 
   final Folder folder;
-  final int tabIndex;
+  final FolderInput tabIndex;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -257,7 +259,9 @@ class FolderTile extends ConsumerWidget {
       leading: const Icon(Icons.folder),
       title: Text(path.basename(folder.fullPath)),
       onTap: () async {
-        ref.read(folderProvider(tabIndex).notifier).changeDir(folder.fullPath);
+        await ref
+            .read(folderProvider(tabIndex).notifier)
+            .changeDir(folder.fullPath);
       },
       trailing: HardlinkButtons(path: folder.fullPath),
     );
@@ -289,8 +293,8 @@ class FileTile extends ConsumerWidget {
 
 class HardlinkButtons extends ConsumerWidget {
   const HardlinkButtons({
-    super.key,
     required this.path,
+    super.key,
     this.isFile = false,
   });
 

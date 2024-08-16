@@ -1,5 +1,6 @@
 import 'package:alt/presentation/folder_view.dart';
 import 'package:alt/presentation/hardlink_bar.dart';
+import 'package:alt/providers/filesystem_provider.dart';
 import 'package:alt/services/fs_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -18,10 +19,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'ALT',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.lightGreenAccent,
+          brightness: Brightness.dark,
+        ),
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -37,8 +41,16 @@ class MyHomePage extends ConsumerWidget {
     return const Scaffold(
       body: Row(
         children: [
-          Flexible(flex: 1, child: FolderView(tabIndex: 0)),
-          Flexible(flex: 1, child: FolderView(tabIndex: 1)),
+          Expanded(
+            child: FolderView(
+              input: FolderInput(initialDir: '/mnt/pool/media/', tab: 0),
+            ),
+          ),
+          Expanded(
+            child: FolderView(
+              input: FolderInput(initialDir: '/mnt/pool/media/', tab: 1),
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: HardlinkBar(),
