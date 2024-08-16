@@ -7,8 +7,8 @@ import 'package:path_provider/path_provider.dart';
 late final Logger logger;
 
 Future<void> initLogger() async {
-  final extDir = await getExternalStorageDirectory();
-  final logFile = await File('${extDir!.path}/rnr.log').create(recursive: true);
+  final extDir = await getApplicationDocumentsDirectory();
+  final logFile = await File('${extDir.path}/alt/alt.log').create(recursive: true);
 
   logger = Logger(
     level: Level.all,

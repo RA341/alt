@@ -1,6 +1,6 @@
+import 'package:alt/grpc/grpc_client.dart';
 import 'package:alt/protos/filesystem.pb.dart';
-import 'package:alt/providers/hardlink_provider.dart';
-import 'package:alt/services/fs_client.dart';
+import 'package:alt/core/hardlink/providers/hardlink_provider.dart';
 import 'package:alt/services/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,8 +13,6 @@ class HardlinkBar extends ConsumerStatefulWidget {
 }
 
 class _HardlinkBarState extends ConsumerState<HardlinkBar> {
-  // late final Tex
-
   late final TextEditingController srcController;
   late final TextEditingController destController;
 
@@ -49,9 +47,6 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
   Widget build(BuildContext context) {
     destController.text = ref.watch(destPathProvider);
     srcController.text = ref.watch(srcPathProvider);
-
-    var buttonEnabled =
-        destController.text.isNotEmpty && srcController.text.isNotEmpty;
 
     return Container(
       decoration: BoxDecoration(
@@ -96,38 +91,11 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 15),
             ElevatedButton(
-              onPressed: buttonEnabled
-                  ? () async {
-                      final input = InputFolders(
-                        srcPath: srcController.text,
-                        destPath: destController.text,
-                      );
-
-                      try {
-                        await FsService.i.client.linkFolder(input);
-                        ref
-                          ..invalidate(srcPathProvider)
-                          ..invalidate(destPathProvider);
-                      } catch (e) {
-                        logger.e(
-                          'Error occurred while linking: ${srcController.text} ----> ${destController.text}',
-                          error: e,
-                        );
-
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Error occurred while hard linking $e',
-                            ),
-                          ),
-                        );
-                      }
-                    }
+              onPressed: destController.text.isNotEmpty &&
+                      srcController.text.isNotEmpty
+                  ? hardlinkFiles
                   : null,
               child: const Text(
                 'Hardlink',
@@ -140,23 +108,52 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
     );
   }
 
+  Future<void> hardlinkFiles() async {
+    final input = InputFolders(
+      srcPath: srcController.text,
+      destPath: destController.text,
+    );
+
+    try {
+      await fs.linkFolder(input);
+      ref
+        ..invalidate(srcPathProvider)
+        ..invalidate(destPathProvider);
+    } catch (e) {
+      logger.e(
+        'Error occurred while linking: ${srcController.text} ----> ${destController.text}',
+        error: e,
+      );
+
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Error occurred while hard linking $e',
+          ),
+        ),
+      );
+    }
+  }
+
   InputDecoration addTextFieldDecoration(
     String hintText,
     TextEditingController controller,
   ) {
     return InputDecoration(
-        border: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.deepPurple, width: 100),
-          borderRadius: BorderRadius.all(
-            Radius.circular(20),
-          ),
+      border: const OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.deepPurple, width: 100),
+        borderRadius: BorderRadius.all(
+          Radius.circular(20),
         ),
-        labelText: hintText,
-        suffixIcon: IconButton(
-          onPressed: () {
-            controller.clear();
-          },
-          icon: const Icon(Icons.clear),
-        ));
+      ),
+      labelText: hintText,
+      suffixIcon: IconButton(
+        onPressed: () {
+          controller.clear();
+        },
+        icon: const Icon(Icons.clear),
+      ),
+    );
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:alt/grpc/grpc_client.dart';
 import 'package:alt/protos/filesystem.pb.dart';
-import 'package:alt/services/fs_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,7 +12,7 @@ final queryProvider =
 
 final fetchFolderProvider =
     FutureProvider.family<Folder, String>((ref, String path) async {
-  return FsService.i.client.listFiles(Path(path: path));
+  return fs.listFiles(Path(path: path));
 });
 
 class FileFetcher extends AutoDisposeFamilyAsyncNotifier<Folder, FolderInput> {
