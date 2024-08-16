@@ -1,7 +1,7 @@
 import 'package:alt/protos/filesystem.pb.dart';
-import 'package:alt/providers/filesystem_provider.dart';
 import 'package:alt/providers/hardlink_provider.dart';
 import 'package:alt/services/fs_client.dart';
+import 'package:alt/services/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -54,19 +54,18 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
         destController.text.isNotEmpty && srcController.text.isNotEmpty;
 
     return Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
-        color: Colors.blue,
+        color: Theme.of(context).colorScheme.primary.withAlpha(30),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(25),
+        padding: const EdgeInsets.all(15),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Hardlink paths'),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -97,6 +96,9 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
                 ),
               ],
             ),
+            const SizedBox(
+              height: 15,
+            ),
             ElevatedButton(
               onPressed: buttonEnabled
                   ? () async {
@@ -105,13 +107,16 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
                         destPath: destController.text,
                       );
 
-
                       try {
                         await FsService.i.client.linkFolder(input);
-                        ref.invalidate(srcPathProvider);
-                        ref.invalidate(destPathProvider);
+                        ref
+                          ..invalidate(srcPathProvider)
+                          ..invalidate(destPathProvider);
                       } catch (e) {
-                        print('Error occurred while linking $e');
+                        logger.e(
+                          'Error occurred while linking: ${srcController.text} ----> ${destController.text}',
+                          error: e,
+                        );
 
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -124,8 +129,11 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
                       }
                     }
                   : null,
-              child: const Text('Hardlink'),
-            )
+              child: const Text(
+                'Hardlink',
+                style: TextStyle(fontSize: 17),
+              ),
+            ),
           ],
         ),
       ),
@@ -133,7 +141,9 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
   }
 
   InputDecoration addTextFieldDecoration(
-      String hintText, TextEditingController controller) {
+    String hintText,
+    TextEditingController controller,
+  ) {
     return InputDecoration(
         border: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.deepPurple, width: 100),

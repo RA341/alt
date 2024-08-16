@@ -28,7 +28,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
   void initState() {
     searchController = TextEditingController();
     searchController.addListener(
-      () {
+          () {
         setState(() {});
       },
     );
@@ -106,7 +106,10 @@ class _FolderViewState extends ConsumerState<FolderView> {
                   icon: const Icon(Icons.refresh),
                 )
               ],
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+              backgroundColor: Theme
+                  .of(context)
+                  .colorScheme
+                  .inversePrimary,
               title: Text(data.fullPath),
             ),
             Expanded(
@@ -196,7 +199,7 @@ class _NewFolderDialogState extends State<NewFolderDialog> {
   void initState() {
     controller = TextEditingController();
     controller.addListener(
-      () {
+          () {
         setState(() {});
       },
     );
@@ -231,11 +234,11 @@ class _NewFolderDialogState extends State<NewFolderDialog> {
           onPressed: controller.text.isEmpty
               ? null
               : () {
-                  FsService.i.client.createFolder(
-                    Path(path: fullPath),
-                  );
-                  Navigator.of(context, rootNavigator: true).pop();
-                },
+            FsService.i.client.createFolder(
+              Path(path: fullPath),
+            );
+            Navigator.of(context, rootNavigator: true).pop();
+          },
           child: const Text('Create Folder'),
         )
       ],
@@ -316,31 +319,49 @@ class HardlinkButtons extends ConsumerWidget {
           onPressed: isDestSelected
               ? null
               : () {
-                  if (isSrcSelected) {
-                    ref.read(srcPathProvider.notifier).state = '';
-                    return;
-                  }
-                  ref.read(srcPathProvider.notifier).state = path;
-                },
+            if (isSrcSelected) {
+              ref
+                  .read(srcPathProvider.notifier)
+                  .state = '';
+              return;
+            }
+            ref
+                .read(srcPathProvider.notifier)
+                .state = path;
+          },
           style: ElevatedButton.styleFrom(
-            backgroundColor: isSrcSelected ? Colors.blue : null,
+            backgroundColor: isSrcSelected
+                ? Theme
+                .of(context)
+                .highlightColor
+                .withGreen(30)
+                : null,
           ),
           child: const Text('Hardlink Source'),
         ),
         const SizedBox(width: 10),
-        if (!isFile) // we don't want a file as the hardlink destination
+        if (!isFile) // a file should not be hardlink destination
           ElevatedButton(
             onPressed: isSrcSelected
                 ? null
                 : () {
-                    if (isDestSelected) {
-                      ref.read(destPathProvider.notifier).state = '';
-                      return;
-                    }
-                    ref.read(destPathProvider.notifier).state = path;
-                  },
+              if (isDestSelected) {
+                ref
+                    .read(destPathProvider.notifier)
+                    .state = '';
+                return;
+              }
+              ref
+                  .read(destPathProvider.notifier)
+                  .state = path;
+            },
             style: ElevatedButton.styleFrom(
-              backgroundColor: isDestSelected ? Colors.lightGreen : null,
+              backgroundColor: isDestSelected
+                  ? Theme
+                  .of(context)
+                  .primaryColorDark
+                  .withGreen(50)
+                  : null,
             ),
             child: const Text('Hardlink Destination'),
           ),
