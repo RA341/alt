@@ -1,9 +1,5 @@
-import 'package:alt/core/hardlink/providers/filesystem_provider.dart';
-import 'package:alt/core/hardlink/ui/folder_view.dart';
-import 'package:alt/core/hardlink/ui/hardlink_bar.dart';
-import 'package:alt/navigation/navigation_provider.dart';
-import 'package:alt/navigation/ui/scaffhold_selector.dart';
 import 'package:alt/grpc/grpc_client.dart';
+import 'package:alt/navigation/ui/scaffhold_selector.dart';
 import 'package:alt/services/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initLogger();
-  grpClient.initClients('192.168.50.123', '8080');
+  grpClient.initClients('192.168.50.123', '9221');
 
   runApp(const ProviderScope(child: MyApp()));
 }

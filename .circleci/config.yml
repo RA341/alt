@@ -1,0 +1,89 @@
+version: 2.1
+
+orbs:
+  flutter: circleci/flutter@2.0.4
+  win: circleci/windows@5.0
+  node: circleci/node@5.0.0 # for sem ver
+  android: circleci/android@1.0.3
+
+executors:
+  linux:
+    docker:
+      - image: cimg/base:stable
+    resource_class: medium
+
+jobs:
+  analyze_and_test:
+    executor: linux
+    steps:
+      - checkout
+      - flutter/install_sdk_and_pub:
+          version: 3.22.0
+  #      - run: flutter analyze todo analyze still tanks even with --no-fatal-infos --no-fatal-warnings because of very_good_analysis
+  #      - run: flutter test
+
+  semver-release:
+    executor: node/default
+    steps:
+      - checkout
+      - run: npm install @semantic-release/git @semantic-release/changelog -D
+      - node/install-packages # Install and automatically cache packages
+      - run: npx semantic-release
+      - run: node ./scripts/update_pubspec_version.js # change pubspec version
+
+  build_android:
+    executor:
+      name: android/android-machine
+    steps:
+      - flutter/install_sdk_and_pub:
+          version: 3.24.0
+      - flutter/install_android_gradle_dependencies
+      - flutter/install_android_gem
+      - run:
+          name: Print tag
+          command: |
+            if [ -n "$CIRCLE_TAG" ]; then
+              echo "Running build for tag: $CIRCLE_TAG"
+            else
+              echo "This is not a tag build"
+            fi
+      - run: dart pub global activate flutter_distributor
+      - run: flutter_distributor release --name prod --jobs=windows
+
+  build_linux:
+    executor: linux
+    steps:
+      - checkout
+      - flutter/install_sdk_and_pub:
+          version: 3.24.0
+      - run: dart pub global activate flutter_distributor
+      - run: flutter_distributor release --name prod --jobs=linux-deb
+
+  build_windows:
+    executor: win/default
+    steps:
+      - checkout
+      - flutter/install_sdk_and_pub:
+          version: 3.24.0
+      - run: dart pub global activate flutter_distributor
+      - run: flutter_distributor release --name prod --jobs=windows
+
+workflows:
+  build:
+    jobs:
+      - semver-release:
+          filters:
+            branches:
+              only: [ "release" ]
+      - build_linux_android:
+          filters:
+            branches:
+              only: [ "release" ]
+          requires:
+            - semver-release
+      - build_windows:
+          filters:
+            branches:
+              only: [ "release" ]
+          requires:
+            - semver-release
