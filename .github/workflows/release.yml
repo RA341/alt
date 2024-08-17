@@ -120,9 +120,30 @@ jobs:
         id: tagName
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
+      - name: Generate Self-Signed Certificate
+        shell: pwsh
+        run: |
+          $email = "${{ secrets.DOMAIN }}"
+          $password = ConvertTo-SecureString -String "${{ secrets.CERTPASS }}" -Force -AsPlainText
+
+          $cert = New-SelfSignedCertificate `
+              -CertStoreLocation Cert:\LocalMachine\My `
+              -DnsName $email `
+              -FriendlyName "My Self-Signed Certificate" `
+              -NotAfter (Get-Date).AddYears(5)
+
+          $certPath = "$env:GITHUB_WORKSPACE\mycert.pfx"
+
+          Export-PfxCertificate `
+              -Cert "Cert:\LocalMachine\My\$($cert.Thumbprint)" `
+              -FilePath $certPath `
+              -Password $password
+
+          Write-Host "Certificate generated at $certPath"
+
       - name: Build windows-msix
         run: |
-          dart run msix:create
+          dart run msix:create -c mycert.pfx -p secrets.CERTPASS
           mv build\windows\x64\runner\Release\alt.msix alt_${{ steps.tagName.outputs.tag }}.msix
 
       - name: Upload Release Asset
