@@ -122,9 +122,12 @@ jobs:
 
       - name: Generate Self-Signed Certificate
         shell: pwsh
+        env:
+          domain: ${{ secrets.DOMAIN }}
+          pass: ${{ secrets.CERTPASS }}
         run: |
-          $email = "${{ secrets.DOMAIN }}"
-          $password = ConvertTo-SecureString -String "${{ secrets.CERTPASS }}" -Force -AsPlainText
+          $email = "$env:domain"
+          $password = ConvertTo-SecureString -String "$env:pass" -Force -AsPlainText
 
           $cert = New-SelfSignedCertificate `
               -CertStoreLocation Cert:\LocalMachine\My `

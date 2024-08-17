@@ -1,25 +1,32 @@
 display_name: ALT
 package_name: alt
+generic_name: Companion app for alt
 maintainer:
   name: ra341
   email: exa@mple.com
+#icon: assets/logo.png
 
 priority: optional
 section: x11
 essential: false
+installed_size: 10000
 
-#postinstall_scripts:
-#  - echo "Installed my awesome app"
-#postuninstall_scripts:
-#  - echo "Surprised Pickachu face"
+postinstall_scripts:
+  - echo "Installed app"
+postuninstall_scripts:
+  - echo "Surprised Pickachu face"
 
 keywords:
   - ctrl
   - app
-
-generic_name: Companion app
+  - Application
 
 categories:
   - Utility
 
 startup_notify: false
+
+
+
+
+
