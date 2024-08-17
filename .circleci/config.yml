@@ -42,8 +42,8 @@ jobs:
       - run: flutter pub get
       - flutter/install_android_gradle_dependencies
       - run: |
-          dart pub global activate --source hosted --cache-dir .dart_tool/ flutter_distributor
-          export PATH="$PATH":"$PWD/.dart_tool/bin"
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          dart pub global activate flutter_distributor
           flutter_distributor release --name prod --jobs=android
 
   build_linux:
