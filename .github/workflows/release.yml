@@ -65,6 +65,9 @@ jobs:
       - name: Enable Linux Desktop
         run: flutter config --enable-linux-desktop
 
+      - name: Install linux deps
+        run: apt-get install libgtk-3-0 libblkid1 liblzma5 ninja-build
+
       - name: 'Get tag'
         id: tagName
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
@@ -78,7 +81,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            rnr_${{ steps.tagName.outputs.tag }}.apk
+            dist/${{ steps.tagName.outputs.tag }}*/*
           tag_name: ${{ steps.tagName.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -128,7 +131,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            rnr_${{ steps.tagName.outputs.tag }}.apk
+            dist/${{ steps.tagName.outputs.tag }}*/*
           tag_name: ${{ steps.tagName.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
