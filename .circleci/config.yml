@@ -35,6 +35,7 @@ jobs:
     executor:
       name: android/android-machine
     steps:
+      - checkout
       - flutter/install_sdk_and_pub:
           version: 3.24.0
       - run:
