@@ -28,7 +28,7 @@ try {
         // Replace the version line or add a new one
         // we don't use a yml parser because it removes spaces and comments which we want to preserve
         const updatedContents = fileContents.replace(
-            /^version:.*$/m, `version: ${version}`) || `${fileContents.trim()}\nversion: ${version}`;
+            /^version:.*$/m, `version: ${version}+1`) || `${fileContents.trim()}\nversion: ${version}+1`;
 
         // Write the updated YAML data back to the file
         fs.writeFileSync(filePath, updatedContents);
