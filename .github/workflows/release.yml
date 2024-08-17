@@ -65,15 +65,13 @@ jobs:
       - name: Enable Linux Desktop
         run: flutter config --enable-linux-desktop
 
-      - name: Install linux deps
-        run: sudo apt-get install libgtk-3-0 libblkid1 liblzma5 ninja-build
-
       - name: 'Get tag'
         id: tagName
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
       - name: Build android-linux
         run: |
+          sudo apt-get install libgtk-3-0 libblkid1 liblzma5 ninja-build
           dart pub global activate flutter_distributor
           flutter_distributor release --name prod --jobs=android,linux-deb
 
