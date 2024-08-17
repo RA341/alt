@@ -126,8 +126,8 @@ jobs:
           domain: ${{ secrets.DOMAIN }}
           pass: ${{ secrets.CERTPASS }}
         run: |
-          $email = "$env:domain"
-          $password = ConvertTo-SecureString -String "$env:pass" -Force -AsPlainText
+          $email = $env:domain
+          $password = ConvertTo-SecureString -String $env:pass -Force -AsPlainText
 
           $cert = New-SelfSignedCertificate `
               -CertStoreLocation Cert:\LocalMachine\My `
