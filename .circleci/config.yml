@@ -41,8 +41,9 @@ jobs:
           version: 3.24.0
       - run: flutter pub get
       - flutter/install_android_gradle_dependencies
-      - run: dart pub global activate flutter_distributor
-      - run: flutter_distributor release --name prod --jobs=android
+      - run: |
+          dart pub global activate flutter_distributor
+          flutter_distributor release --name prod --jobs=android
 
   build_linux:
     executor: linux
@@ -50,8 +51,9 @@ jobs:
       - checkout
       - flutter/install_sdk_and_pub:
           version: 3.24.0
-      - run: dart pub global activate flutter_distributor
-      - run: flutter_distributor release --name prod --jobs=linux-deb
+      - run: |
+          dart pub global activate flutter_distributor
+          flutter_distributor release --name prod --jobs=linux-deb
 
   build_windows:
     executor: win/default
@@ -59,8 +61,9 @@ jobs:
       - checkout
       - flutter/install_sdk_and_pub:
           version: 3.24.0
-      - run: dart pub global activate flutter_distributor
-      - run: flutter_distributor release --name prod --jobs=windows
+      - run: |
+          dart pub global activate flutter_distributor
+          flutter_distributor release --name prod --jobs=windows
 
 workflows:
   build:
