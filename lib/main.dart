@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initLogger();
-  grpClient.initClients('192.168.50.123', '9221');
+  grpClient.initClients('192.168.50.123', '8080');
 
   runApp(const ProviderScope(child: MyApp()));
 }

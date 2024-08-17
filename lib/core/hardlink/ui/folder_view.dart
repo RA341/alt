@@ -104,17 +104,23 @@ class _FolderViewState extends ConsumerState<FolderView> {
                     refreshDir(data);
                   },
                   icon: const Icon(Icons.refresh),
-                )
+                ),
               ],
               backgroundColor: Theme.of(context).colorScheme.inversePrimary,
               title: Text(data.fullPath),
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: folderList.length + fileList.length,
+                itemCount: folderList.length + fileList.length + 1,
                 itemBuilder: (context, index) {
-                  if (folderList.length > index) {
-                    final folder = folderList[index];
+                  final realIndex =
+                      index - 1; // accounting for current directory tile
+                  if (index == 0) {
+                    return CurrentDirTile(currentDirPath: data.fullPath);
+                  }
+
+                  if (folderList.length > realIndex) {
+                    final folder = folderList[realIndex];
 
                     if (searchController.text.isEmpty) {
                       return FolderTile(folder: folder, tabIndex: input);
@@ -131,7 +137,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
                   }
 
                   final file = fileList.elementAt(
-                    index - folderList.length,
+                    realIndex - folderList.length,
                   );
 
                   if (searchController.text.isEmpty) {
@@ -162,7 +168,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
                   ref.invalidate(folderProvider(input));
                 },
                 icon: const Icon(Icons.refresh),
-              )
+              ),
             ],
           ),
         );
@@ -261,7 +267,28 @@ class FolderTile extends ConsumerWidget {
             .read(folderProvider(tabIndex).notifier)
             .changeDir(folder.fullPath);
       },
-      trailing: HardlinkButtons(path: folder.fullPath),
+      trailing: HardlinkButtons(fPath: folder.fullPath),
+    );
+  }
+}
+
+class CurrentDirTile extends ConsumerWidget {
+  const CurrentDirTile({
+    required this.currentDirPath,
+    super.key,
+  });
+
+  final String currentDirPath;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ListTile(
+      leading: const Icon(Icons.folder),
+      title: Text(path.basename('.')),
+      trailing: HardlinkButtons(
+        fPath: currentDirPath,
+        parentPath: currentDirPath,
+      ),
     );
   }
 }
@@ -282,7 +309,7 @@ class FileTile extends ConsumerWidget {
       leading: const Icon(Icons.file_present),
       title: Text(file.name),
       trailing: HardlinkButtons(
-        path: '$parentPath/${file.name}',
+        fPath: '$parentPath/${file.name}',
         isFile: true,
       ),
     );
@@ -291,21 +318,23 @@ class FileTile extends ConsumerWidget {
 
 class HardlinkButtons extends ConsumerWidget {
   const HardlinkButtons({
-    required this.path,
+    required this.fPath,
     super.key,
     this.isFile = false,
+    this.parentPath = '',
   });
 
   final bool isFile;
-  final String path;
+  final String fPath;
+  final String? parentPath;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final src = ref.watch(srcPathProvider);
-    final isSrcSelected = src == path;
+    final isSrcSelected = src == fPath;
 
     final dest = ref.watch(destPathProvider);
-    final isDestSelected = dest == path;
+    final isDestSelected = dest == fPath;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -318,7 +347,7 @@ class HardlinkButtons extends ConsumerWidget {
                     ref.read(srcPathProvider.notifier).state = '';
                     return;
                   }
-                  ref.read(srcPathProvider.notifier).state = path;
+                  ref.read(srcPathProvider.notifier).state = fPath;
                 },
           style: ElevatedButton.styleFrom(
             backgroundColor: isSrcSelected
@@ -337,7 +366,14 @@ class HardlinkButtons extends ConsumerWidget {
                       ref.read(destPathProvider.notifier).state = '';
                       return;
                     }
-                    ref.read(destPathProvider.notifier).state = path;
+
+                    if (parentPath != null && fPath == parentPath) {
+                      // autofill with src dir name
+                      ref.read(destPathProvider.notifier).state =
+                          '$fPath/${path.basename(src)}';
+                      return;
+                    }
+                    ref.read(destPathProvider.notifier).state = fPath;
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: isDestSelected
