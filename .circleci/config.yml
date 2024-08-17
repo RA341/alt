@@ -37,9 +37,6 @@ jobs:
     steps:
       - flutter/install_sdk_and_pub:
           version: 3.24.0
-      - run: flutter pub get
-      - flutter/install_android_gradle_dependencies
-      - flutter/install_android_gem
       - run:
           name: Print tag
           command: |
@@ -48,6 +45,9 @@ jobs:
             else
               echo "This is not a tag build"
             fi
+      - run: flutter pub get
+      - flutter/install_android_gradle_dependencies
+      - flutter/install_android_gem
       - run: dart pub global activate flutter_distributor
       - run: flutter_distributor release --name prod --jobs=windows
 
