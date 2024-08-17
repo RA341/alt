@@ -123,14 +123,22 @@ class _FolderViewState extends ConsumerState<FolderView> {
                     final folder = folderList[realIndex];
 
                     if (searchController.text.isEmpty) {
-                      return FolderTile(folder: folder, tabIndex: input);
+                      return FolderTile(
+                        folder: folder,
+                        tabIndex: input,
+                        clearSearch: searchController.clear,
+                      );
                     }
 
                     if (path
                         .basename(folder.fullPath)
                         .toLowerCase()
                         .contains(searchController.text.toLowerCase())) {
-                      return FolderTile(folder: folder, tabIndex: input);
+                      return FolderTile(
+                        folder: folder,
+                        tabIndex: input,
+                        clearSearch: searchController.clear,
+                      );
                     }
 
                     return const SizedBox();
@@ -251,11 +259,13 @@ class FolderTile extends ConsumerWidget {
   const FolderTile({
     required this.folder,
     required this.tabIndex,
+    required this.clearSearch,
     super.key,
   });
 
   final Folder folder;
   final FolderInput tabIndex;
+  final void Function() clearSearch;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -266,6 +276,7 @@ class FolderTile extends ConsumerWidget {
         await ref
             .read(folderProvider(tabIndex).notifier)
             .changeDir(folder.fullPath);
+        clearSearch();
       },
       trailing: HardlinkButtons(fPath: folder.fullPath),
     );

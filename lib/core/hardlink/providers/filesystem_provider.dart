@@ -6,10 +6,6 @@ import 'package:alt/services/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final queryProvider =
-    StateProvider.autoDispose.family<String, int>((ref, int tabIndex) {
-  return '';
-});
 
 final fetchFolderProvider =
     FutureProvider.autoDispose.family<Folder, String>((ref, String path) async {
