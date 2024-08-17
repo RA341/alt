@@ -126,12 +126,11 @@ jobs:
           domain: ${{ secrets.DOMAIN }}
           pass: ${{ secrets.CERTPASS }}
         run: |
-          $email = $env:domain
-          $password = ConvertTo-SecureString -String $env:pass -Force -AsPlainText
+          $password = ConvertTo-SecureString -String "$env:pass" -Force -AsPlainText
 
           $cert = New-SelfSignedCertificate `
               -CertStoreLocation Cert:\LocalMachine\My `
-              -DnsName $email `
+              -DnsName "$env:domain" `
               -FriendlyName "My Self-Signed Certificate" `
               -NotAfter (Get-Date).AddYears(5)
 
