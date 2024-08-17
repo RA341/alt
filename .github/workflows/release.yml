@@ -1,0 +1,134 @@
+name: Build
+
+on:
+  push:
+    branches: [ "release" , "ci"]
+
+jobs:
+
+  tag-release:
+    name: tag-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+      - name: install plugins
+        run: npm install @semantic-release/git @semantic-release/changelog -D
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+
+      - name: Update pubspec version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node ./scripts/update_pubspec_version.js # change pubspec version
+
+  build:
+    needs:
+      - tag-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: "17.x" # device apps needs java 17
+
+      - name: Enable Linux Desktop
+        run: flutter config --enable-linux-desktop
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.24.0
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: 'Get tag'
+        id: tagName
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+
+      - name: Build android-linux
+        run: |
+          dart pub global activate flutter_distributor
+          flutter_distributor release --name prod --jobs=android,linux-deb
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            rnr_${{ steps.tagName.outputs.tag }}.apk
+          tag_name: ${{ steps.tagName.outputs.tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    runs-on: windows-latest
+    needs:
+      - tag-release
+
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: "21.x"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.24.0
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Enable Windows Desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: 'Get tag'
+        id: tagName
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+
+      - name: Build windows-msix
+        run: |
+          dart pub global activate flutter_distributor
+          flutter_distributor release --name prod --jobs=windows
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            rnr_${{ steps.tagName.outputs.tag }}.apk
+          tag_name: ${{ steps.tagName.outputs.tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
