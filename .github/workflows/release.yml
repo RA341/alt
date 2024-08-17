@@ -76,7 +76,7 @@ jobs:
 
       - name: Build linux
         run: |
-          sudo apt-get install libgtk-3-0 libblkid1 liblzma5 ninja-build
+          sudo apt-get install libgtk-3-0 libgtk-3-dev libblkid1 liblzma5 ninja-build
           dart pub global activate flutter_distributor
           flutter_distributor release --name prod --jobs=linux-deb
 
