@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [ "release" , "ci"]
+    branches: [ "release" , "ci" ]
 
 jobs:
 
@@ -104,22 +104,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version: 3.24.0
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Enable Windows Desktop
-        run: flutter config --enable-windows-desktop
-
-      - name: 'Get tag'
-        id: tagName
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-
       - name: Generate Self-Signed Certificate
         shell: pwsh
         env:
@@ -142,6 +126,22 @@ jobs:
               -Password $password
 
           Write-Host "Certificate generated at $certPath"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.24.0
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Enable Windows Desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: 'Get tag'
+        id: tagName
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
       - name: Build windows-msix
         run: |
