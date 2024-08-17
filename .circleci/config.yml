@@ -4,7 +4,6 @@ orbs:
   flutter: circleci/flutter@2.0.4
   win: circleci/windows@5.0
   node: circleci/node@5.2.0 # for sem ver
-  android: circleci/android@2.5.0
 
 
 executors:
@@ -33,9 +32,7 @@ jobs:
       - run: node ./scripts/update_pubspec_version.js # change pubspec version
 
   build_android:
-    executor:
-      name: android/android-machine
-      tag: default
+    executor: linux
 
     steps:
       - checkout
