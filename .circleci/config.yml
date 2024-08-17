@@ -34,6 +34,7 @@ jobs:
   build_android:
     executor:
       name: android/android-machine
+      tag: default
     steps:
       - checkout
       - flutter/install_sdk_and_pub:
