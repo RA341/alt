@@ -6,6 +6,7 @@ orbs:
   node: circleci/node@5.2.0 # for sem ver
   android: circleci/android@2.5.0
 
+
 executors:
   linux:
     docker:
@@ -35,12 +36,14 @@ jobs:
     executor:
       name: android/android-machine
       tag: default
+
     steps:
       - checkout
       - flutter/install_sdk_and_pub:
           version: 3.24.0
       - run: flutter pub get
       - flutter/install_android_gradle_dependencies
+      - run: flutter -v build apk --release
       - run: |
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           dart pub global activate flutter_distributor
