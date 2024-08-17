@@ -69,7 +69,12 @@ jobs:
         id: tagName
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
-      - name: Build android-linux
+      - name: Build android
+        run: |
+          flutter build apk --release
+          mv build/app/outputs/flutter-apk/app-release.apk alt_${{ steps.tagName.outputs.tag }}.apk
+
+      - name: Build linux
         run: |
           sudo apt-get install libgtk-3-0 libblkid1 liblzma5 ninja-build
           dart pub global activate flutter_distributor
@@ -79,7 +84,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/${{ steps.tagName.outputs.tag }}*/*
+            alt_${{ steps.tagName.outputs.tag }}.apk
           tag_name: ${{ steps.tagName.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -122,14 +127,14 @@ jobs:
 
       - name: Build windows-msix
         run: |
-          dart pub global activate flutter_distributor
-          flutter_distributor release --name prod --jobs=windows
+          dart run msix:create
+          mv build\windows\x64\runner\Release\alt.msix alt_${{ steps.tagName.outputs.tag }}.msix
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/${{ steps.tagName.outputs.tag }}*/*
+            alt_${{ steps.tagName.outputs.tag }}.msix
           tag_name: ${{ steps.tagName.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -29,9 +29,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  msix: ^3.16.8
   very_good_analysis: ^6.0.0
   riverpod_annotation: ^2.3.5
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
@@ -52,3 +53,10 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
+
+
+msix_config:
+  display_name: "ALT"
+  publisher_display_name: Dumbapps
+  identity_name: org.dumbapps.alt
+  capabilities: internetClient
