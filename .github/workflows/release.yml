@@ -106,9 +106,11 @@ jobs:
           fetch-depth: 0
 
       - name: Clone certificate repository
-        run: git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ secrets.CERTUSERNAME }}/${{ secrets.CERTREPO }}.git cert
+        run: git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/"${{ secrets.CERTUSERNAME }}"/"${{ secrets.CERTREPO }}".git cert
         env:
           GIT_TERMINAL_PROMPT: 0
+          repo: ${{ secrets.CERTREPO }}
+          owner: ${{ secrets.CERTUSERNAME }}
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
