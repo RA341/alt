@@ -84,6 +84,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
+            dist/${{ steps.tagName.outputs.tag }}*/*
             alt_${{ steps.tagName.outputs.tag }}.apk
           tag_name: ${{ steps.tagName.outputs.tag }}
         env:
@@ -110,11 +111,11 @@ jobs:
           domain: ${{ secrets.DOMAIN }}
           pass: ${{ secrets.CERTPASS }}
         run: |
-          $password = ConvertTo-SecureString -String "$env:pass" -Force -AsPlainText
+          $password = ConvertTo-SecureString -String "$Env:pass" -Force -AsPlainText
 
           $cert = New-SelfSignedCertificate `
               -CertStoreLocation Cert:\LocalMachine\My `
-              -DnsName "$env:domain" `
+              -DnsName "$Env:domain" `
               -FriendlyName "My Self-Signed Certificate" `
               -NotAfter (Get-Date).AddYears(5)
 
@@ -145,7 +146,7 @@ jobs:
 
       - name: Build windows-msix
         run: |
-          dart run msix:create -c mycert.pfx -p secrets.CERTPASS
+          dart run msix:create
           mv build\windows\x64\runner\Release\alt.msix alt_${{ steps.tagName.outputs.tag }}.msix
 
       - name: Upload Release Asset
