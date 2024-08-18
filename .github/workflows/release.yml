@@ -15,7 +15,7 @@ jobs:
       pull-requests: write # to be able to comment on released pull requests
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Setup Node.js
@@ -105,6 +105,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Create self signed cert
+        run: |
+          scripts/create_cert.ps1 -Domain "domain.org" -Password "yourpassword"
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -123,7 +127,7 @@ jobs:
 
       - name: Build windows-msix
         run: |
-          dart run msix:create
+          dart run msix:create -c mycert.pfx -p secrets.CERTPASS
           mv build\windows\x64\runner\Release\alt.msix alt_${{ steps.tagName.outputs.tag }}.msix
 
       - name: Upload Release Asset
