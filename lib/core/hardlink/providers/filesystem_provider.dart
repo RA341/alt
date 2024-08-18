@@ -2,16 +2,15 @@ import 'dart:async';
 
 import 'package:alt/grpc/grpc_client.dart';
 import 'package:alt/protos/filesystem.pb.dart';
+import 'package:alt/services/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final queryProvider =
-    StateProvider.autoDispose.family<String, int>((ref, int tabIndex) {
-  return '';
-});
 
 final fetchFolderProvider =
-    FutureProvider.family<Folder, String>((ref, String path) async {
+    FutureProvider.autoDispose.family<Folder, String>((ref, String path) async {
+  // remove cached folders after 5 min
+  ref.cacheFor(const Duration(minutes: 5));
   return fs.listFiles(Path(path: path));
 });
 
