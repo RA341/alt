@@ -105,9 +105,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create self signed cert
-        run: |
-          scripts/create_cert.ps1 -Domain "domain.org" -Password "yourpassword"
+      - name: Clone certificate repository
+        run: git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ secrets.CERTUSERNAME }}/${{ secrets.CERTREPO }}.git cert
+        env:
+          GIT_TERMINAL_PROMPT: 0
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
