@@ -60,5 +60,5 @@ msix_config:
   publisher_display_name: Dumbapps
   identity_name: org.dumbapps.alt
   capabilities: internetClient
-  install_certificate: true
-  sign_msix: true
+  install_certificate: false
+  sign_msix: false
