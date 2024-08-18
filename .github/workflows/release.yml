@@ -106,6 +106,7 @@ jobs:
           fetch-depth: 0
 
       - name: Clone certificate repository
+        shell: pwsh
         run: git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$env:repo/$env:owner.git cert
         env:
           GIT_TERMINAL_PROMPT: 0
@@ -129,6 +130,7 @@ jobs:
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
       - name: Build windows-msix
+        shell: pwsh
         run: |
           dart run msix:create -c mycert.pfx -p "yourpassword"
           mv build\windows\x64\runner\Release\alt.msix alt_${{ steps.tagName.outputs.tag }}.msix
