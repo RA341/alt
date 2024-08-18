@@ -106,7 +106,7 @@ jobs:
           fetch-depth: 0
 
       - name: Clone certificate repository
-        run: git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/"${{ secrets.CERTUSERNAME }}"/"${{ secrets.CERTREPO }}".git cert
+        run: git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/"$env:repo"/"$env:owner".git cert
         env:
           GIT_TERMINAL_PROMPT: 0
           repo: ${{ secrets.CERTREPO }}
