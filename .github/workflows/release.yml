@@ -127,7 +127,7 @@ jobs:
 
       - name: Build windows-msix
         run: |
-          dart run msix:create -c mycert.pfx -p secrets.CERTPASS
+          dart run msix:create -c mycert.pfx -p "yourpassword"
           mv build\windows\x64\runner\Release\alt.msix alt_${{ steps.tagName.outputs.tag }}.msix
 
       - name: Upload Release Asset
