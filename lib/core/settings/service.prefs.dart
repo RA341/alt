@@ -14,6 +14,9 @@ class PrefsManager {
 
   late final SharedPreferences prefs;
 
+  String get baseUrl => prefs.getString(PrefsKeys.baseNameKey) ?? 'localhost';
+  String get port => prefs.getString(PrefsKeys.portKey) ?? '8080';
+
   Future<void> init() async {
     prefs = await SharedPreferences.getInstance();
   }

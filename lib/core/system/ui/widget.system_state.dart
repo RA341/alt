@@ -1,3 +1,4 @@
+import 'package:alt/core/system/ui/widget.server_connection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,10 +24,10 @@ class SystemInfo extends ConsumerWidget {
             padding: EdgeInsets.all(systemButtonPadding),
             child: Text('Mac address:'),
           ),
-          Padding(
-            padding: EdgeInsets.all(systemButtonPadding),
-            child: Text('Status:'),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.all(systemButtonPadding),
+          //   child: CheckServerStatus(),
+          // ),
           Padding(
             padding: EdgeInsets.all(systemButtonPadding),
             child: Text('IP:'),
