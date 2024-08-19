@@ -4,6 +4,7 @@ import 'package:alt/grpc/grpc_client.dart';
 import 'package:alt/protos/filesystem.pb.dart';
 import 'package:alt/protos/filesystem.pbgrpc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
 
@@ -164,7 +165,7 @@ class _FolderViewState extends ConsumerState<FolderView> {
               ),
             ),
           ],
-        );
+        ).animate().fadeIn(duration: const Duration(milliseconds: 225));
       },
       error: (error, stackTrace) {
         return Center(
@@ -183,7 +184,9 @@ class _FolderViewState extends ConsumerState<FolderView> {
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CircularProgressIndicator())
+          .animate()
+          .fadeIn(duration: const Duration(seconds: 1)),
     );
   }
 
