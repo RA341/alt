@@ -1,6 +1,6 @@
-import 'package:alt/core/hardlink/providers/filesystem_provider.dart';
-import 'package:alt/core/hardlink/ui/hardlink_bar.dart';
-import 'package:alt/services/prefs.dart';
+import 'package:alt/core/hardlink/providers/provider.filesystem.dart';
+import 'package:alt/core/hardlink/ui/widget.hardlinkbar.dart';
+import 'package:alt/core/settings/service.prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

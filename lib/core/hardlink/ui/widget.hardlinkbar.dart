@@ -1,6 +1,6 @@
+import 'package:alt/core/hardlink/providers/provider.hardlink.dart';
 import 'package:alt/grpc/grpc_client.dart';
 import 'package:alt/protos/filesystem.pb.dart';
-import 'package:alt/core/hardlink/providers/hardlink_provider.dart';
 import 'package:alt/services/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -135,7 +135,6 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
       );
     }
   }
-
 }
 
 InputDecoration addTextFieldDecoration(

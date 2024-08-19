@@ -1,7 +1,7 @@
 import 'package:alt/grpc/grpc_client.dart';
 import 'package:alt/navigation/ui/scaffhold_selector.dart';
 import 'package:alt/services/logger.dart';
-import 'package:alt/services/prefs.dart';
+import 'package:alt/core/settings/service.prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
