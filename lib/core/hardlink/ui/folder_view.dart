@@ -173,7 +173,9 @@ class _FolderViewState extends ConsumerState<FolderView> {
               Text(error.toString()),
               IconButton(
                 onPressed: () {
-                  ref.invalidate(folderProvider(input));
+                  ref.read(folderProvider(input).notifier).refreshDir(
+                        input.initialDir,
+                      );
                 },
                 icon: const Icon(Icons.refresh),
               ),

@@ -136,24 +136,25 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
     }
   }
 
-  InputDecoration addTextFieldDecoration(
-    String hintText,
-    TextEditingController controller,
-  ) {
-    return InputDecoration(
-      border: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.deepPurple, width: 100),
-        borderRadius: BorderRadius.all(
-          Radius.circular(20),
-        ),
+}
+
+InputDecoration addTextFieldDecoration(
+  String hintText,
+  TextEditingController controller,
+) {
+  return InputDecoration(
+    border: const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.deepPurple, width: 100),
+      borderRadius: BorderRadius.all(
+        Radius.circular(20),
       ),
-      labelText: hintText,
-      suffixIcon: IconButton(
-        onPressed: () {
-          controller.clear();
-        },
-        icon: const Icon(Icons.clear),
-      ),
-    );
-  }
+    ),
+    labelText: hintText,
+    suffixIcon: IconButton(
+      onPressed: () {
+        controller.clear();
+      },
+      icon: const Icon(Icons.clear),
+    ),
+  );
 }

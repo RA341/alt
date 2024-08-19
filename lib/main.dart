@@ -10,8 +10,10 @@ Future<void> main() async {
   await initLogger();
   await prefs.init();
 
-
-  grpClient.initClients('192.168.50.123', '8080');
+  grpClient.initClients(
+    prefs.prefs.getString(PrefsKeys.baseNameKey) ?? 'localhost',
+    prefs.prefs.getString(PrefsKeys.portKey) ?? '8080',
+  );
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -45,4 +47,3 @@ class MyHomePage extends ConsumerWidget {
     return const ScaffholdSelector();
   }
 }
-
