@@ -1,3 +1,18 @@
+# [1.1.0](https://github.com/RA341/alt/compare/1.0.0...1.1.0) (2024-08-20)
+
+
+### Bug Fixes
+
+* cursor resetting itself to start of textbox ([f8c1c84](https://github.com/RA341/alt/commit/f8c1c84fabd26341855270f01ec51e4a2a1ce2da))
+* cursor resetting itself to start of textbox ([1cccbc2](https://github.com/RA341/alt/commit/1cccbc2642f75d15ed5b97a2d2ffba14187fda80))
+* rebuilt client files ([40359d0](https://github.com/RA341/alt/commit/40359d0bbff810505fdcaf67a710564b09013bcc))
+
+
+### Features
+
+* added test connection ([0c356b8](https://github.com/RA341/alt/commit/0c356b8e123c01257e5c6ffd96bcc03e0e9311d2))
+* added transition in file view ([595f9f7](https://github.com/RA341/alt/commit/595f9f758ce4484a0ec4b4be360404b053827db8))
+
 # 1.0.0 (2024-08-18)
 
 
