@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/RA341/alt/compare/1.1.0...1.1.1) (2024-08-20)
+
+
+### Bug Fixes
+
+* hardlink button not activating ([d0f6b82](https://github.com/RA341/alt/commit/d0f6b82e309b8d3b29386cc9c5d112684ffa8d1c))
+
 # [1.1.0](https://github.com/RA341/alt/compare/1.0.0...1.1.0) (2024-08-20)
 
 
