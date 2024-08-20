@@ -77,3 +77,4 @@ msix_config:
   identity_name: org.dumbapps.alt
   capabilities: internetClient
   install_certificate: false
+  logo_path: assets/app_icon.png
