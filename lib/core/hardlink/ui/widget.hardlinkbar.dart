@@ -28,24 +28,30 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
     ref
       ..listen(
         srcPathProvider,
-        (_, next) {
+        (_, newString) {
           final currentCursorPosition = srcController.selection.base.offset;
-          srcController
-            ..text = next
-            ..selection = TextSelection.fromPosition(
+          srcController.text = newString;
+
+          if (newString.isNotEmpty) {
+            srcController.selection = TextSelection.fromPosition(
               TextPosition(offset: currentCursorPosition),
             );
+          }
+          setState(() {});
         },
       )
       ..listen(
         destPathProvider,
-        (_, next) {
+        (_, newString) {
           final currentCursorPosition = destController.selection.base.offset;
-          destController
-            ..text = next
-            ..selection = TextSelection.fromPosition(
+          destController.text = newString;
+
+          if (newString.isNotEmpty) {
+            destController.selection = TextSelection.fromPosition(
               TextPosition(offset: currentCursorPosition),
             );
+          }
+          setState(() {});
         },
       );
 
@@ -98,8 +104,8 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
             ),
             const SizedBox(height: 15),
             ElevatedButton(
-              onPressed: destController.text.isNotEmpty &&
-                      srcController.text.isNotEmpty
+              onPressed: ref.read(destPathProvider).isNotEmpty &&
+                      ref.read(srcPathProvider).isNotEmpty
                   ? hardlinkFiles
                   : null,
               child: const Text(
