@@ -1,9 +1,14 @@
-import 'package:alt/core/hardlink/providers/filesystem_provider.dart';
-import 'package:alt/core/hardlink/providers/hardlink_provider.dart';
-import 'package:alt/grpc/grpc_client.dart';
+import 'package:alt/core/hardlink/providers/provider.filesystem.dart';
+import 'package:alt/core/hardlink/providers/provider.hardlink.dart';
+import 'package:alt/core/hardlink/ui/dialog.create_folder.dart';
+import 'package:alt/core/hardlink/ui/tile.currentdir.dart';
+import 'package:alt/core/hardlink/ui/tile.file.dart';
+import 'package:alt/core/hardlink/ui/tile.folder.dart';
+import 'package:alt/core/hardlink/ui/tile.previous_dir.dart';
 import 'package:alt/protos/filesystem.pb.dart';
 import 'package:alt/protos/filesystem.pbgrpc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
 
@@ -52,17 +57,10 @@ class _FolderViewState extends ConsumerState<FolderView> {
         final folderList = data.folders;
         final fileList = data.files;
 
+        final listItemCount = folderList.length + fileList.length + 2;
         return Column(
           children: [
             AppBar(
-              leading: IconButton(
-                onPressed: () {
-                  ref
-                      .read(folderProvider(input).notifier)
-                      .changeDir(path.dirname(data.fullPath));
-                },
-                icon: const Icon(Icons.arrow_back),
-              ),
               actions: [
                 SizedBox(
                   width: 400,
@@ -111,60 +109,39 @@ class _FolderViewState extends ConsumerState<FolderView> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: folderList.length + fileList.length + 1,
+                itemCount: listItemCount,
                 itemBuilder: (context, index) {
-                  final realIndex =
-                      index - 1; // accounting for current directory tile
+                  // accounting for current directory tile
+                  final realIndex = index - 2;
                   if (index == 0) {
                     return CurrentDirTile(currentDirPath: data.fullPath);
+                  } else if (index == 1) {
+                    return PreviousFolderTile(
+                      folder: Folder(fullPath: path.dirname(data.fullPath)),
+                      tabIndex: input,
+                      clearSearch: searchController.clear,
+                    );
                   }
 
                   if (folderList.length > realIndex) {
-                    final folder = folderList[realIndex];
-
-                    if (searchController.text.isEmpty) {
-                      return FolderTile(
-                        folder: folder,
-                        tabIndex: input,
-                        clearSearch: searchController.clear,
-                      );
-                    }
-
-                    if (path
-                        .basename(folder.fullPath)
-                        .toLowerCase()
-                        .contains(searchController.text.toLowerCase())) {
-                      return FolderTile(
-                        folder: folder,
-                        tabIndex: input,
-                        clearSearch: searchController.clear,
-                      );
-                    }
-
-                    return const SizedBox();
+                    return BuildFolderWidget(
+                      searchController: searchController,
+                      folder: folderList[realIndex],
+                      input: input,
+                    );
                   }
 
-                  final file = fileList.elementAt(
-                    realIndex - folderList.length,
+                  final fileIndex = realIndex - folderList.length;
+                  return BuildFileTile(
+                    query: searchController.text,
+                    file: fileList[fileIndex],
+                    data: data,
                   );
-
-                  if (searchController.text.isEmpty) {
-                    return FileTile(file: file, parentPath: data.fullPath);
-                  }
-
-                  if (path
-                      .basename(file.name)
-                      .toLowerCase()
-                      .contains(searchController.text.toLowerCase())) {
-                    return FileTile(file: file, parentPath: data.fullPath);
-                  }
-
-                  return const SizedBox();
                 },
               ),
             ),
           ],
-        );
+        ).animate().fadeIn(duration: const Duration(milliseconds: 225));
       },
       error: (error, stackTrace) {
         return Center(
@@ -173,7 +150,9 @@ class _FolderViewState extends ConsumerState<FolderView> {
               Text(error.toString()),
               IconButton(
                 onPressed: () {
-                  ref.invalidate(folderProvider(input));
+                  ref.read(folderProvider(input).notifier).refreshDir(
+                        input.initialDir,
+                      );
                 },
                 icon: const Icon(Icons.refresh),
               ),
@@ -181,7 +160,9 @@ class _FolderViewState extends ConsumerState<FolderView> {
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CircularProgressIndicator())
+          .animate()
+          .fadeIn(duration: const Duration(seconds: 1)),
     );
   }
 
@@ -190,140 +171,68 @@ class _FolderViewState extends ConsumerState<FolderView> {
   }
 }
 
-class NewFolderDialog extends StatefulWidget {
-  const NewFolderDialog({required this.parentPath, super.key});
+class BuildFolderWidget extends StatelessWidget {
+  const BuildFolderWidget({
+    required this.searchController,
+    required this.folder,
+    required this.input,
+    super.key,
+  });
 
-  final String parentPath;
-
-  @override
-  State<NewFolderDialog> createState() => _NewFolderDialogState();
-}
-
-class _NewFolderDialogState extends State<NewFolderDialog> {
-  late final TextEditingController controller;
-
-  String get parentPath => widget.parentPath;
-
-  String get fullPath => '$parentPath/${controller.text}';
-
-  @override
-  void initState() {
-    controller = TextEditingController();
-    controller.addListener(
-      () {
-        setState(() {});
-      },
-    );
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+  final TextEditingController searchController;
+  final Folder folder;
+  final FolderInput input;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.deepPurple, width: 100),
-              borderRadius: BorderRadius.all(
-                Radius.circular(20),
-              ),
-            ),
-            labelText: 'Folder Name',
-          ),
-        ),
-        Text(fullPath),
-        ElevatedButton(
-          onPressed: controller.text.isEmpty
-              ? null
-              : () {
-                  fs.createFolder(Path(path: fullPath));
-                  Navigator.of(context, rootNavigator: true).pop();
-                },
-          child: const Text('Create Folder'),
-        )
-      ],
-    );
+    final query = searchController.text;
+
+    if (query.isEmpty) {
+      return FolderTile(
+        folder: folder,
+        tabIndex: input,
+        clearSearch: searchController.clear,
+      );
+    }
+
+    if (path
+        .basename(folder.fullPath)
+        .toLowerCase()
+        .contains(query.toLowerCase())) {
+      return FolderTile(
+        folder: folder,
+        tabIndex: input,
+        clearSearch: searchController.clear,
+      );
+    }
+
+    return const SizedBox();
   }
 }
 
-class FolderTile extends ConsumerWidget {
-  const FolderTile({
-    required this.folder,
-    required this.tabIndex,
-    required this.clearSearch,
-    super.key,
-  });
-
-  final Folder folder;
-  final FolderInput tabIndex;
-  final void Function() clearSearch;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ListTile(
-      leading: const Icon(Icons.folder),
-      title: Text(path.basename(folder.fullPath)),
-      onTap: () async {
-        await ref
-            .read(folderProvider(tabIndex).notifier)
-            .changeDir(folder.fullPath);
-        clearSearch();
-      },
-      trailing: HardlinkButtons(fPath: folder.fullPath),
-    );
-  }
-}
-
-class CurrentDirTile extends ConsumerWidget {
-  const CurrentDirTile({
-    required this.currentDirPath,
-    super.key,
-  });
-
-  final String currentDirPath;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ListTile(
-      leading: const Icon(Icons.folder),
-      title: Text(path.basename('.')),
-      trailing: HardlinkButtons(
-        fPath: currentDirPath,
-        parentPath: currentDirPath,
-      ),
-    );
-  }
-}
-
-class FileTile extends ConsumerWidget {
-  const FileTile({
-    required this.parentPath,
+class BuildFileTile extends StatelessWidget {
+  const BuildFileTile({
+    required this.query,
     required this.file,
+    required this.data,
     super.key,
   });
 
-  final String parentPath;
+  final String query;
   final File file;
+  final Folder data;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ListTile(
-      leading: const Icon(Icons.file_present),
-      title: Text(file.name),
-      trailing: HardlinkButtons(
-        fPath: '$parentPath/${file.name}',
-        isFile: true,
-      ),
-    );
+  Widget build(BuildContext context) {
+    if (query.isEmpty) {
+      return FileTile(file: file, parentPath: data.fullPath);
+    }
+
+    if (path.basename(file.name).toLowerCase().contains(query.toLowerCase())) {
+      return FileTile(file: file, parentPath: data.fullPath);
+    }
+
+    return const SizedBox();
   }
 }
 

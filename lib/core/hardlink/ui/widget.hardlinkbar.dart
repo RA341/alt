@@ -1,6 +1,6 @@
+import 'package:alt/core/hardlink/providers/provider.hardlink.dart';
 import 'package:alt/grpc/grpc_client.dart';
 import 'package:alt/protos/filesystem.pb.dart';
-import 'package:alt/core/hardlink/providers/hardlink_provider.dart';
 import 'package:alt/services/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,28 +13,8 @@ class HardlinkBar extends ConsumerStatefulWidget {
 }
 
 class _HardlinkBarState extends ConsumerState<HardlinkBar> {
-  late final TextEditingController srcController;
-  late final TextEditingController destController;
-
-  @override
-  void initState() {
-    srcController = TextEditingController();
-    destController = TextEditingController();
-
-    srcController.addListener(
-      () {
-        ref.read(srcPathProvider.notifier).state = srcController.text;
-      },
-    );
-
-    destController.addListener(
-      () {
-        ref.read(destPathProvider.notifier).state = destController.text;
-      },
-    );
-
-    super.initState();
-  }
+  late final TextEditingController srcController = TextEditingController();
+  late final TextEditingController destController = TextEditingController();
 
   @override
   void dispose() {
@@ -45,8 +25,29 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
 
   @override
   Widget build(BuildContext context) {
-    destController.text = ref.watch(destPathProvider);
-    srcController.text = ref.watch(srcPathProvider);
+    ref
+      ..listen(
+        srcPathProvider,
+        (_, next) {
+          final currentCursorPosition = srcController.selection.base.offset;
+          srcController
+            ..text = next
+            ..selection = TextSelection.fromPosition(
+              TextPosition(offset: currentCursorPosition),
+            );
+        },
+      )
+      ..listen(
+        destPathProvider,
+        (_, next) {
+          final currentCursorPosition = destController.selection.base.offset;
+          destController
+            ..text = next
+            ..selection = TextSelection.fromPosition(
+              TextPosition(offset: currentCursorPosition),
+            );
+        },
+      );
 
     return Container(
       decoration: BoxDecoration(
@@ -69,6 +70,8 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
                     padding: const EdgeInsets.all(10),
                     child: TextField(
                       controller: srcController,
+                      onChanged: (value) =>
+                          ref.read(srcPathProvider.notifier).state = value,
                       decoration: addTextFieldDecoration(
                         'Source Path',
                         srcController,
@@ -82,6 +85,8 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
                     padding: const EdgeInsets.all(10),
                     child: TextField(
                       controller: destController,
+                      onChanged: (value) =>
+                          ref.read(destPathProvider.notifier).state = value,
                       decoration: addTextFieldDecoration(
                         'Destination Path',
                         destController,
@@ -135,25 +140,25 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
       );
     }
   }
+}
 
-  InputDecoration addTextFieldDecoration(
-    String hintText,
-    TextEditingController controller,
-  ) {
-    return InputDecoration(
-      border: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.deepPurple, width: 100),
-        borderRadius: BorderRadius.all(
-          Radius.circular(20),
-        ),
+InputDecoration addTextFieldDecoration(
+  String hintText,
+  TextEditingController controller,
+) {
+  return InputDecoration(
+    border: const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.deepPurple, width: 100),
+      borderRadius: BorderRadius.all(
+        Radius.circular(20),
       ),
-      labelText: hintText,
-      suffixIcon: IconButton(
-        onPressed: () {
-          controller.clear();
-        },
-        icon: const Icon(Icons.clear),
-      ),
-    );
-  }
+    ),
+    labelText: hintText,
+    suffixIcon: IconButton(
+      onPressed: () {
+        controller.clear();
+      },
+      icon: const Icon(Icons.clear),
+    ),
+  );
 }

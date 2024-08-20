@@ -1,3 +1,4 @@
+import 'package:alt/core/system/system.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -32,6 +33,15 @@ class SystemButtons extends ConsumerWidget {
             padding: const EdgeInsets.all(systemButtonPadding),
             child:
                 ElevatedButton(onPressed: () {}, child: const Text('Reboot')),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(systemButtonPadding),
+            child: ElevatedButton(
+              onPressed: () async {
+                await start('98:29:A6:3D:02:B5');
+              },
+              child: const Text('Start'),
+            ),
           ),
         ],
       ),

@@ -1,13 +1,19 @@
 import 'package:alt/grpc/grpc_client.dart';
 import 'package:alt/navigation/ui/scaffhold_selector.dart';
 import 'package:alt/services/logger.dart';
+import 'package:alt/core/settings/service.prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initLogger();
-  grpClient.initClients('192.168.50.123', '8080');
+  await prefs.init();
+
+  grpClient.initClients(
+    prefs.prefs.getString(PrefsKeys.baseNameKey) ?? 'localhost',
+    prefs.prefs.getString(PrefsKeys.portKey) ?? '8080',
+  );
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -41,4 +47,3 @@ class MyHomePage extends ConsumerWidget {
     return const ScaffholdSelector();
   }
 }
-

@@ -1,5 +1,5 @@
-import 'package:alt/core/system/ui/system_buttons.dart';
-import 'package:alt/core/system/ui/system_state.dart';
+import 'package:alt/core/system/ui/widget.system_buttons.dart';
+import 'package:alt/core/system/ui/widget.system_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

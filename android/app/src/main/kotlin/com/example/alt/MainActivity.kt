@@ -1,4 +1,4 @@
-package com.example.client
+package com.example.alt
 
 import io.flutter.embedding.android.FlutterActivity
 
