@@ -28,7 +28,7 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
     ref
       ..listen(
         srcPathProvider,
-        (previous, next) {
+        (_, next) {
           final currentCursorPosition = srcController.selection.base.offset;
           srcController
             ..text = next
@@ -39,7 +39,7 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
       )
       ..listen(
         destPathProvider,
-        (previous, next) {
+        (_, next) {
           final currentCursorPosition = destController.selection.base.offset;
           destController
             ..text = next
