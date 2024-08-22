@@ -287,7 +287,12 @@ class HardlinkButtons extends ConsumerWidget {
                       return;
                     }
 
-                    if (parentPath != null && fPath == parentPath) {
+                    final autoFillDestination =
+                        ref.read(autofillDestinationProvider);
+
+                    if (autoFillDestination &&
+                        parentPath != null &&
+                        fPath == parentPath) {
                       // autofill with src dir name
                       ref.read(destPathProvider.notifier).state =
                           '$fPath/${path.basename(src)}';

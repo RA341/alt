@@ -7,3 +7,11 @@ final srcPathProvider = StateProvider.autoDispose<String>((ref) {
 final destPathProvider = StateProvider.autoDispose<String>((ref) {
   return '';
 });
+
+final pinDestinationLocationProvider = StateProvider<bool>((ref) {
+  return false;
+});
+
+final autofillDestinationProvider = StateProvider<bool>((ref) {
+  return true;
+});

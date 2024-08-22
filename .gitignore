@@ -22,6 +22,8 @@ migrate_working_dir/
 #.vscode/
 
 dist/*
+main
+alt.msix
 
 # Flutter/Dart/Pub related
 **/doc/api/
