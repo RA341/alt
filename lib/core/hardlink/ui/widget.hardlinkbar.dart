@@ -4,6 +4,7 @@ import 'package:alt/protos/filesystem.pb.dart';
 import 'package:alt/services/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as path;
 
 class HardlinkBar extends ConsumerStatefulWidget {
   const HardlinkBar({super.key});
@@ -25,16 +26,26 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
 
   @override
   Widget build(BuildContext context) {
+    final pinDest = ref.watch(pinDestinationLocationProvider);
+    final autofill = ref.watch(autofillDestinationProvider);
+
     ref
       ..listen(
         srcPathProvider,
-            (_, newString) {
+        (_, newString) {
           final currentCursorPosition = srcController.selection.base.offset;
           srcController.text = newString;
 
-          if (newString.isNotEmpty) {
-            srcController.selection = TextSelection.fromPosition(
-              TextPosition(offset: currentCursorPosition),
+          try {
+            if (newString.isNotEmpty) {
+              srcController.selection = TextSelection.fromPosition(
+                TextPosition(offset: currentCursorPosition),
+              );
+            }
+          } catch (e) {
+            logger.d(
+              'watch it dumb dumb',
+              error: e,
             );
           }
           setState(() {});
@@ -42,14 +53,21 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
       )
       ..listen(
         destPathProvider,
-            (_, newString) {
+        (_, newString) {
           final currentCursorPosition = destController.selection.base.offset;
           destController.text = newString;
 
           if (newString.isNotEmpty) {
-            destController.selection = TextSelection.fromPosition(
-              TextPosition(offset: currentCursorPosition),
-            );
+            try {
+              destController.selection = TextSelection.fromPosition(
+                TextPosition(offset: currentCursorPosition),
+              );
+            } catch (e) {
+              logger.d(
+                'This probably occurred, destination was pinned and autofill is enabled',
+                error: e,
+              );
+            }
           }
           setState(() {});
         },
@@ -77,7 +95,7 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
                     child: TextField(
                       controller: srcController,
                       onChanged: (value) =>
-                      ref.read(srcPathProvider.notifier).state = value,
+                          ref.read(srcPathProvider.notifier).state = value,
                       decoration: addTextFieldDecoration(
                         'Source Path',
                         srcController,
@@ -92,7 +110,7 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
                     child: TextField(
                       controller: destController,
                       onChanged: (value) =>
-                      ref.read(destPathProvider.notifier).state = value,
+                          ref.read(destPathProvider.notifier).state = value,
                       decoration: addTextFieldDecoration(
                         'Destination Path',
                         destController,
@@ -103,15 +121,51 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
               ],
             ),
             const SizedBox(height: 15),
-            ElevatedButton(
-              onPressed: ref.read(destPathProvider).isNotEmpty &&
-                  ref.read(srcPathProvider).isNotEmpty
-                  ? hardlinkFiles
-                  : null,
-              child: const Text(
-                'Hardlink',
-                style: TextStyle(fontSize: 17),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: ref.read(destPathProvider).isNotEmpty &&
+                          ref.read(srcPathProvider).isNotEmpty
+                      ? hardlinkFiles
+                      : null,
+                  child: const Text(
+                    'Hardlink',
+                    style: TextStyle(fontSize: 17),
+                  ),
+                ),
+                const SizedBox(width: 130),
+                const Text(
+                  'Pin Destination:',
+                  style: TextStyle(fontSize: 17),
+                ),
+                IconButton(
+                  onPressed: () {
+                    ref.read(pinDestinationLocationProvider.notifier).state =
+                        !pinDest;
+                  },
+                  icon: Icon(
+                    pinDest ? Icons.push_pin : Icons.push_pin_outlined,
+                  ),
+                ),
+                const SizedBox(width: 75),
+                const Text(
+                  'Autofill Destination folder:',
+                  style: TextStyle(fontSize: 17),
+                ),
+                IconButton(
+                  onPressed: () {
+                    ref.read(autofillDestinationProvider.notifier).state =
+                        !autofill;
+                  },
+                  icon: Icon(
+                    autofill
+                        ? Icons.auto_fix_normal_rounded
+                        : Icons.auto_fix_off_rounded,
+                  ),
+                ),
+                const SizedBox(width: 125),
+              ],
             ),
           ],
         ),
@@ -127,9 +181,15 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
 
     try {
       await fs.linkFolder(input);
-      ref
-        ..invalidate(srcPathProvider)
-        ..invalidate(destPathProvider);
+
+      if (!ref.read(pinDestinationLocationProvider)) {
+        ref.invalidate(destPathProvider);
+      } else {
+        final dest = path.dirname(destController.text);
+        ref.read(destPathProvider.notifier).state = dest;
+      }
+
+      ref.invalidate(srcPathProvider);
     } catch (e) {
       logger.e(
         'Error occurred while linking: ${srcController.text} ----> ${destController.text}',
@@ -149,9 +209,9 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
 }
 
 InputDecoration addTextFieldDecoration(
-    String hintText,
-    TextEditingController controller,
-    ) {
+  String hintText,
+  TextEditingController controller,
+) {
   return InputDecoration(
     border: const OutlineInputBorder(
       borderSide: BorderSide(color: Colors.deepPurple, width: 100),
