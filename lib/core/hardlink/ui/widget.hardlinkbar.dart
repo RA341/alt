@@ -58,6 +58,7 @@ class _HardlinkBarState extends ConsumerState<HardlinkBar> {
           destController.text = newString;
 
           if (newString.isNotEmpty) {
+
             try {
               destController.selection = TextSelection.fromPosition(
                 TextPosition(offset: currentCursorPosition),
