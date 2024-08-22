@@ -1,3 +1,11 @@
+# [1.2.0](https://github.com/RA341/alt/compare/1.1.1...1.2.0) (2024-08-22)
+
+
+### Features
+
+* added internet permission ([2e4cb43](https://github.com/RA341/alt/commit/2e4cb438a2d9d53dcf978cea57858db3e45e5392))
+* added new pin and autofill buttons ([7715777](https://github.com/RA341/alt/commit/771577732a655b01828cf6c619edfa44d88cab78))
+
 ## [1.1.1](https://github.com/RA341/alt/compare/1.1.0...1.1.1) (2024-08-20)
 
 
