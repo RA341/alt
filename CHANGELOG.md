@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/RA341/alt/compare/1.2.0...1.2.1) (2024-08-29)
+
+
+### Bug Fixes
+
+* changed create folder function signature ([6f8e6d5](https://github.com/RA341/alt/commit/6f8e6d51d62285c8d618c68eecce9af6f6fe4644))
+
 # [1.2.0](https://github.com/RA341/alt/compare/1.1.1...1.2.0) (2024-08-22)
 
 
