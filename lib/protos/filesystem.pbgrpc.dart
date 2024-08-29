@@ -29,9 +29,9 @@ class FilesystemClient extends $grpc.Client {
       '/fs.Filesystem/LinkFolder',
       ($0.InputFolders value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.LinkResult.fromBuffer(value));
-  static final _$createFolder = $grpc.ClientMethod<$0.Path, $0.LinkResult>(
+  static final _$createFolder = $grpc.ClientMethod<$0.NewPath, $0.LinkResult>(
       '/fs.Filesystem/CreateFolder',
-      ($0.Path value) => value.writeToBuffer(),
+      ($0.NewPath value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.LinkResult.fromBuffer(value));
 
   FilesystemClient($grpc.ClientChannel channel,
@@ -48,7 +48,7 @@ class FilesystemClient extends $grpc.Client {
     return $createUnaryCall(_$linkFolder, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.LinkResult> createFolder($0.Path request, {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.LinkResult> createFolder($0.NewPath request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$createFolder, request, options: options);
   }
 }
@@ -72,12 +72,12 @@ abstract class FilesystemServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.InputFolders.fromBuffer(value),
         ($0.LinkResult value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.Path, $0.LinkResult>(
+    $addMethod($grpc.ServiceMethod<$0.NewPath, $0.LinkResult>(
         'CreateFolder',
         createFolder_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $0.Path.fromBuffer(value),
+        ($core.List<$core.int> value) => $0.NewPath.fromBuffer(value),
         ($0.LinkResult value) => value.writeToBuffer()));
   }
 
@@ -89,11 +89,11 @@ abstract class FilesystemServiceBase extends $grpc.Service {
     return linkFolder(call, await request);
   }
 
-  $async.Future<$0.LinkResult> createFolder_Pre($grpc.ServiceCall call, $async.Future<$0.Path> request) async {
+  $async.Future<$0.LinkResult> createFolder_Pre($grpc.ServiceCall call, $async.Future<$0.NewPath> request) async {
     return createFolder(call, await request);
   }
 
   $async.Future<$0.Folder> listFiles($grpc.ServiceCall call, $0.Path request);
   $async.Future<$0.LinkResult> linkFolder($grpc.ServiceCall call, $0.InputFolders request);
-  $async.Future<$0.LinkResult> createFolder($grpc.ServiceCall call, $0.Path request);
+  $async.Future<$0.LinkResult> createFolder($grpc.ServiceCall call, $0.NewPath request);
 }

@@ -175,6 +175,69 @@ class Path extends $pb.GeneratedMessage {
   void clearPath() => clearField(1);
 }
 
+class NewPath extends $pb.GeneratedMessage {
+  factory NewPath({
+    $core.String? path,
+    $core.String? anchorPath,
+  }) {
+    final $result = create();
+    if (path != null) {
+      $result.path = path;
+    }
+    if (anchorPath != null) {
+      $result.anchorPath = anchorPath;
+    }
+    return $result;
+  }
+  NewPath._() : super();
+  factory NewPath.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory NewPath.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'NewPath', package: const $pb.PackageName(_omitMessageNames ? '' : 'fs'), createEmptyInstance: create)
+    ..aQS(1, _omitFieldNames ? '' : 'path')
+    ..aQS(2, _omitFieldNames ? '' : 'anchorPath', protoName: 'anchorPath')
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  NewPath clone() => NewPath()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  NewPath copyWith(void Function(NewPath) updates) => super.copyWith((message) => updates(message as NewPath)) as NewPath;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static NewPath create() => NewPath._();
+  NewPath createEmptyInstance() => create();
+  static $pb.PbList<NewPath> createRepeated() => $pb.PbList<NewPath>();
+  @$core.pragma('dart2js:noInline')
+  static NewPath getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<NewPath>(create);
+  static NewPath? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get path => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set path($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasPath() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPath() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get anchorPath => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set anchorPath($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasAnchorPath() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAnchorPath() => clearField(2);
+}
+
 class Folder extends $pb.GeneratedMessage {
   factory Folder({
     $core.String? fullPath,

@@ -57,7 +57,10 @@ class _NewFolderDialogState extends State<NewFolderDialog> {
           onPressed: controller.text.isEmpty
               ? null
               : () {
-                  fs.createFolder(Path(path: fullPath));
+                  fs.createFolder(NewPath(
+                    path: fullPath,
+                    anchorPath: parentPath,
+                  ));
                   Navigator.of(context, rootNavigator: true).pop();
                 },
           child: const Text('Create Folder'),

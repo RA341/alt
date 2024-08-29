@@ -51,6 +51,20 @@ const Path$json = {
 final $typed_data.Uint8List pathDescriptor = $convert.base64Decode(
     'CgRQYXRoEhIKBHBhdGgYASACKAlSBHBhdGg=');
 
+@$core.Deprecated('Use newPathDescriptor instead')
+const NewPath$json = {
+  '1': 'NewPath',
+  '2': [
+    {'1': 'path', '3': 1, '4': 2, '5': 9, '10': 'path'},
+    {'1': 'anchorPath', '3': 2, '4': 2, '5': 9, '10': 'anchorPath'},
+  ],
+};
+
+/// Descriptor for `NewPath`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List newPathDescriptor = $convert.base64Decode(
+    'CgdOZXdQYXRoEhIKBHBhdGgYASACKAlSBHBhdGgSHgoKYW5jaG9yUGF0aBgCIAIoCVIKYW5jaG'
+    '9yUGF0aA==');
+
 @$core.Deprecated('Use folderDescriptor instead')
 const Folder$json = {
   '1': 'Folder',
